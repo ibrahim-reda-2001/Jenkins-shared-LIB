@@ -10,12 +10,10 @@ agent any
                 git 'https://github.com/ibrahim-reda-2001/Jenkins-shared-LIB.git'
             }
         }
-        stage('Test') {
+        stage('Build and Push Docker Image') {
             steps {
-                sh ""
-                docker ps 
-            ""
+                buildandpushDocker('dockerhub-cred', 'ibrahimelmsery1', 'my-image')
             }
         }
-    }
+}
 }
