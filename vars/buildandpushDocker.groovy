@@ -1,12 +1,19 @@
-def call(String k8sCredentialsID, String k8sApiServer, String namespace = 'default', string imageName) {
-    withCredentials([string(credentialsId: k8sCredentialsID, variable: 'K8S_TOKEN')]) {
+#!/usr/bin/env groovy
+def call(String dockerCredentialsID, String repoName, String imageName, String dockerfile = 'Dockerfile', ) {
+    
+
+    // Define the full image name with tag (e.g., repoName/imageName:BUILD_NUMBER)
+    def fullImageName = "${repoName}/${imageName}:${BUILD_NUMBER}"
+
+    // Build the Docker image
+    def dockerImage = docker.build(fullImageName, "-f ${dockerfile} .")
+
+    // Push the image to the registry using credentials
+    withCredentials([usernamePassword(credentialsId: dockerCredentialsID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
         sh """
-        sed -i 's|image: .*|image: ibrahimelmsery1/${imageName}|' deploy.yml
-            kubectl --token=\${K8S_TOKEN} \
-                    --server=${k8sApiServer} \
-                    --insecure-skip-tls-verify \
-                    -n ${namespace} \
-                    apply -f deploy.yml
+            echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin
+            docker push ${fullImageName}
+            docker rmi ${fullImageName}
         """
     }
 }
