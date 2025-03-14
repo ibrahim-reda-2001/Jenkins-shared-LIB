@@ -10,10 +10,17 @@ pipeline {
         
     }
     stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'master', 
+                    credentialsId: 'github-token', 
+                    url: 'https://github.com/ibrahim-reda-2001/Jenkins-shared-LIB.git'
+            }
+        }
         stage('Build') {
             steps {
                 script {
-                    buildandpushDocker(dockerCredentialsID: "${DOCKER_CREDENTIALS_ID}",repoName "${DOCKER_REPO}",imageName: "${IMAGE_NAME}",dockerfile: "Dockerfile")
+                    buildandpushDocker(dockerCredentialsID: "${DOCKER_CREDENTIALS_ID}",repoName: "${DOCKER_REPO}",imageName: "${IMAGE_NAME}",dockerfile: "Dockerfile")
                 }
             }
         }
