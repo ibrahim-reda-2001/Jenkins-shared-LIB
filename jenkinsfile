@@ -1,18 +1,20 @@
-@Library('SharedLibraryNTI@master') _
+@Library('test@master') _
 pipeline {
     
 agent any
     stages {
+        
+           
+            stage('prep') {
+            steps {
+                git 'https://github.com/ibrahim-reda-2001/Jenkins-shared-LIB.git'
+            }
+        }
         stage('Test') {
             steps {
-                script {
-                    buildandpushDocker(
-                        dockerCredentialsID: 'docker-hub-cred',
-                        repoName: 'docker.io/test',
-                        imageName: 'test-image',
-                        dockerfile: 'Dockerfile'
-                    )
-                }
+                sh ""
+                docker ps 
+            ""
             }
         }
     }
