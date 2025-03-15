@@ -10,9 +10,14 @@ agent any
                 git 'https://github.com/ibrahim-reda-2001/Jenkins-shared-LIB.git'
             }
         }
-        stage('Build and Push Docker Image') {
+        stage('Docker Build') {
             steps {
-                dockerbuild('dockerhub-cred', 'ibrahimelmsery1', 'my-image')
+                dockerbuild('Docker-cred', 'ibrahimelmsery1', 'my-image')
+            }
+        }
+        stage('Deploy on K8S') {
+            steps {
+               k8sdeploy('k8S-token','https://172.31.38.77:6443','default','my-image')
             }
         }
 }
