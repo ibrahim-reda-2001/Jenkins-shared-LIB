@@ -1,18 +1,9 @@
-#!/usr/bin/env groovy
-def call(String dockerCredentialsID, String repoName, String imageName, String dockerfile = 'Dockerfile') {
-    def fullImageName = "${repoName}/${imageName}:${env.BUILD_NUMBER}"
-    
-    script {
-        def dockerImage = docker.build(fullImageName, "-f ${dockerfile} .")
-    }
-
-    withCredentials([usernamePassword(credentialsId: dockerCredentialsID, 
-        usernameVariable: 'DOCKER_USERNAME', 
-        passwordVariable: 'DOCKER_PASSWORD')]) {
-        sh """
-            echo "\$DOCKER_PASSWORD" | docker login -u "\$DOCKER_USERNAME" --password-stdin
-            docker push ${fullImageName}
-            docker rmi -f ${fullImageName}
-        """
+#!usr/bin/env groovy
+def call(String dockerHubCredentialsID, String repoName, String imageName) {
+    withCredentials([usernamePassword(credentialsId: "${dockerHubCredentialsID}", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+        sh "docker login -u ${USERNAME} -p ${PASSWORD}"
+        sh "docker build -t ${repoName}/${imageName}:${BUILD_NUMBER} ."
+        sh "docker push ${repoName}/${imageName}:${BUILD_NUMBER}"    
+        sh "docker rmi ${repoName}/${imageName}:${BUILD_NUMBER}"
     }
 }
