@@ -11,7 +11,7 @@ def call(String k8sCredentialsID, String k8sApiServer, String imageName, String 
                         --server=${k8sApiServer} \
                         --insecure-skip-tls-verify \
                         -n ${namespace} \
-                        apply -f .
+                        apply -f deployment.yml
             """
         
     }
